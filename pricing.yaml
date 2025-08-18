@@ -1,0 +1,5 @@
+
+# USD per 1K tokens
+openai/gpt-4o-mini:
+  input: 0.0006
+  output: 0.0024

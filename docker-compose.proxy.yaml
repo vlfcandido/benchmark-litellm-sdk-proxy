@@ -1,0 +1,12 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./proxy_config.yaml:/app/config.yaml
+    env_file:
+      - .env
+    environment:
+      - LITELLM_CONFIG_PATH=/app/config.yaml
+    command: ["--port", "4000", "--config", "/app/config.yaml"]

@@ -1,0 +1,13 @@
+{
+  "name": "chat-basic",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Você é um assistente técnico, conciso e direto."
+    },
+    {
+      "role": "user",
+      "content": "Explique em 3 bullets a diferença entre concorrência e paralelismo em Python."
+    }
+  ]
+}

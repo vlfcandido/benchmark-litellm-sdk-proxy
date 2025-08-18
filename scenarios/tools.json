@@ -1,0 +1,33 @@
+{
+  "name": "tool-calling",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Você é um assistente que usa ferramentas quando útil."
+    },
+    {
+      "role": "user",
+      "content": "Qual a previsão do tempo para Cascavel PR amanhã? Use a ferramenta se necessário."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Retorna previsão do tempo (mock) para uma cidade amanhã.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    }
+  ]
+}

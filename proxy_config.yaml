@@ -1,0 +1,13 @@
+# proxy_config.yaml
+litellm_settings:
+  drop_params: ["top_p"]
+
+model_list:
+  - model_name: gpt-4o-mini         # <-- igual ao que você usa no client
+    litellm_params:
+      model: gpt-4o-mini            # <-- repassa para o provider OpenAI
+      api_key: ${OPENAI_API_KEY}    # <-- vem do .env dentro do container
+
+general_settings:
+  master_key: ${LITELLM_PROXY_KEY}  # <-- vem do .env dentro do container
+  num_workers: 2

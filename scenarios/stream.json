@@ -1,0 +1,13 @@
+{
+  "name": "chat-stream",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Você é um assistente que responde rapidamente e em frases curtas."
+    },
+    {
+      "role": "user",
+      "content": "Gere um haicai sobre redes assíncronas e latência."
+    }
+  ]
+}
