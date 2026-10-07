@@ -1,83 +1,56 @@
-# LiteLLM — Benchmark SDK vs Proxy
+# benchmark-litellm-sdk-proxy
 
-Benchmark em Streamlit para comparar LiteLLM SDK e LiteLLM Proxy em cenários de chatbot/ADK.
+Benchmark que compara duas formas de chamar um LLM pelo LiteLLM: o SDK dentro do processo da aplicação e o LiteLLM Proxy (gateway HTTP compatível com a API da OpenAI). Mede latência, tempo até o primeiro token (TTFT), taxa de erro e custo estimado em três cenários típicos de chatbot, e mostra o resultado num painel Streamlit.
 
-## Instalação
+## Por que existe
+
+Antes de colocar um gateway de LLM na frente de vários bots, eu queria saber quanto ele custa em latência e estabilidade comparado à chamada direta. Em vez de opinião, um teste de carga com os mesmos prompts nos dois caminhos.
+
+## O que mede
+
+| cenário | o que exercita |
+|---|---|
+| `chat` | resposta completa, sem streaming e sem tools |
+| `stream` | streaming, com medição de TTFT |
+| `tools` | resposta com definição de tools no payload |
+
+- `run_bench.py` dispara as requisições com concorrência configurável e grava `reports/results_*.csv` linha a linha e `reports/summary_*.md` com percentis e custo (preços em `pricing.yaml`, USD por 1 mil tokens).
+- `app.py` (Streamlit) roda os cenários, mostra placares, curvas ECDF de latência, progresso com ETA e um resumo curto gerado por LLM.
+- `summarize.py` consolida os relatórios mais recentes no terminal.
+
+## Stack
+
+Python 3.11+, LiteLLM (SDK e Proxy em Docker), OpenAI SDK, Streamlit, Plotly, pandas.
+
+## Como rodar
 
 ```bash
-# Clone o projeto
-git clone https://github.com/seu-repo/litellm-bench.git
-cd litellm-bench
-
-# Crie um ambiente virtual (recomendado)
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-
-# Instale dependências
-pip install -U pip
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env                                   # preencha OPENAI_API_KEY e LITELLM_PROXY_KEY
+
+docker compose -f docker-compose.proxy.yaml up -d      # proxy em http://localhost:4000
+streamlit run app.py                                   # painel em http://localhost:8501
 ```
 
-## Configuração
+Sem o painel:
 
-Crie um arquivo `.env` na raiz do projeto:
-
-```dotenv
-# SDK
-OPENAI_API_KEY=sua_chave_openai
-OPENAI_BASE_URL=https://api.openai.com/v1
-LITELLM_SDK_MODEL=openai/gpt-4o-mini
-
-# Proxy
-LITELLM_PROXY_URL=http://localhost:4000/v1
-LITELLM_PROXY_KEY=sk-proxy-123
-
-# Resumos GPT
-SUMMARY_MODEL=gpt-4o-mini
-```
-
-E adicione um arquivo `proxy_config.yaml` com os provedores/modelos que deseja expor pelo proxy.  
-Exemplo básico:
-
-```yaml
-model_list:
-  - model_name: gpt-4o-mini
-    litellm_params:
-      model: gpt-4o-mini
-      api_key: ${OPENAI_API_KEY}
-```
-
-## Executando
-
-### 1. Subir o LiteLLM Proxy com Docker Compose
 ```bash
-docker compose -f docker-compose.proxy.yaml up -d
+python run_bench.py --mode sdk   --scenario stream --requests 200 --concurrency 20
+python run_bench.py --mode proxy --scenario stream --requests 200 --concurrency 20
+python summarize.py
 ```
 
-O proxy ficará disponível em `http://localhost:4000/v1`.
+Os modelos expostos pelo proxy ficam em `proxy_config.yaml`. Os prompts de cada cenário estão em `scenarios/`.
 
-### 2. Rodar o app Streamlit
-```bash
-streamlit run app.py
-```
+## Testes
 
-O app abrirá no navegador em `http://localhost:8501`.
+Não há testes automatizados; o próprio repositório é uma ferramenta de medição. Rodar exige chave de API e gera custo de tokens.
 
-## Estrutura mínima
+## Status
 
-```
-.
-├── app.py                      # UI principal (Streamlit)
-├── proxy_config.yaml           # Configuração do LiteLLM Proxy
-├── docker-compose.proxy.yaml   # Subida do proxy
-├── .env.example                # Exemplo de variáveis de ambiente
-└── requirements.txt            # Dependências do projeto
-```
+Ferramenta de estudo, usada para uma comparação pontual. Os números dependem do provedor, do modelo e da rede, por isso nenhum resultado fica versionado (`reports/` está no `.gitignore`).
 
-## Passos finais
+## Licença
 
-1. Configure `.env`  
-2. Suba o proxy com `docker compose -f docker-compose.proxy.yaml up -d`  
-3. Rode `streamlit run app.py`  
-
-O dashboard exibirá KPIs e comparações SDK vs Proxy.
+MIT.

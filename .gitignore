@@ -19,3 +19,7 @@ reports/
 # Segredos
 .env
 .env.*
+!.env.example
+
+# SO
+.DS_Store
