@@ -2,6 +2,8 @@
 
 Benchmark que compara duas formas de chamar um LLM pelo LiteLLM: o SDK dentro do processo da aplicação e o LiteLLM Proxy (gateway HTTP compatível com a API da OpenAI). Mede latência, tempo até o primeiro token (TTFT), taxa de erro e custo estimado em três cenários típicos de chatbot, e mostra o resultado num painel Streamlit.
 
+![Painel comparando LiteLLM SDK e Proxy: percentis, TTFT, ECDF de latência e placar por cenário](docs/prints/benchmark-litellm-sdk-proxy.png)
+
 ## Por que existe
 
 Antes de colocar um gateway de LLM na frente de vários bots, eu queria saber quanto ele custa em latência e estabilidade comparado à chamada direta. Em vez de opinião, um teste de carga com os mesmos prompts nos dois caminhos.
