@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/marca/cabecalho-escuro.svg">
+  <img alt="benchmark-litellm-sdk-proxy" src="docs/marca/cabecalho-claro.svg" width="100%">
+</picture>
+
 # benchmark-litellm-sdk-proxy
 
 Benchmark que compara duas formas de chamar um LLM pelo LiteLLM: o SDK dentro do processo da aplicação e o LiteLLM Proxy (gateway HTTP compatível com a API da OpenAI). Mede latência, tempo até o primeiro token (TTFT), taxa de erro e custo estimado em três cenários típicos de chatbot, e mostra o resultado num painel Streamlit.
